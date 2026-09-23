@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>One space for all geopolitical &amp; economic threat intelligence.</b><br>
-  <i>Bloomberg × Palantir × Apple Intelligence</i>
+  
 </p>
 
 <p align="center">
