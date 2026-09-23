@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARGOS — Geopolitical & Economic Intelligence Platform</title>
+  <meta name="description" content="One space for all geopolitical & economic threat intelligence. Bloomberg × Palantir × Apple Intelligence terminal combining conflict monitoring, financial markets, AI analyst briefings, and Global Tension Index (GTI).">
+
+  <!-- Typography: Outfit (headings), Inter (interface), JetBrains Mono (data & tickers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+
+  <!-- ARGOS Dark Intelligence Terminal Design System -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Plotly.js for Bloomberg-grade Financial & Analytical Charts -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <!-- Leaflet.js for Geospatial Conflict Mapping -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ======================================================================
+         TOP HEADER
+         ====================================================================== -->
+    <header class="top-header">
+      <div class="brand-section">
+        <div class="brand-logo-badge">🌍</div>
+        <div class="brand-text">
+          <h1>ARGOS <span class="tag">INTELLIGENCE TERMINAL</span></h1>
+          <p>One space for all geopolitical &amp; economic intelligence</p>
+        </div>
+      </div>
+
+      <div class="header-status-controls">
+        <!-- Live UTC Clock -->
+        <div class="status-chip">
+          <span class="dot"></span>
+          <span id="header-utc-clock" class="utc-clock">00:00:00 UTC</span>
+        </div>
+
+        <!-- Last Updated Stamp -->
+        <div class="status-chip">
+          <span id="header-last-updated">Updated Live</span>
+        </div>
+
+        <!-- Auto Refresh 15m Countdown -->
+        <div class="status-chip">
+          <span id="auto-refresh-status">Auto Refresh in 14m 58s</span>
+        </div>
+
+        <!-- Global / My Region Toggle (Brief §8) -->
+        <div class="region-toggle-group">
+          <button class="region-btn active" data-mode="global">Global</button>
+          <button class="region-btn" data-mode="my-region">Monitored Zones</button>
+        </div>
+
+        <!-- Notification Bell with Unread Badge (Brief §8) -->
+        <button id="notification-bell-btn" class="icon-btn" title="Intelligence Alerts">
+          🔔
+          <span class="badge-counter">3</span>
+        </button>
+
+        <!-- Force Refresh Button -->
+        <button id="header-refresh-btn" class="icon-btn" title="Force Sync Pipeline">
+          🔄
+        </button>
+
+        <!-- User Profile -->
+        <div class="user-profile-badge">
+          <div class="user-avatar">AO</div>
+          <div class="user-info">
+            <div class="user-name">Strategic Analyst</div>
+            <div class="user-role">DEFCON // MACRO</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         BREAKING SCROLLING INTELLIGENCE TICKER
+         ====================================================================== -->
+    <div class="intelligence-ticker-bar">
+      <div class="ticker-label">
+        <span class="pulse-ring"></span>
+        <span>BREAKING CABLES</span>
+      </div>
+      <div class="ticker-track-container">
+        <div id="ticker-track" class="ticker-track">
+          <!-- Marquee populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         MAIN APPLICATION LAYOUT (Sidebar + Active Workspace)
+         ====================================================================== -->
+    <div class="main-layout">
+
+      <!-- PERSISTENT LEFT SIDEBAR -->
+      <aside class="sidebar">
+        <!-- Navigation Links -->
+        <nav class="sidebar-nav">
+          <a href="#dashboard" class="nav-link active" data-target="page-dashboard">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="#conflict-map" class="nav-link" data-target="page-conflict-map">
+            <span class="nav-icon">🗺️</span>
+            <span>Global Conflict Map</span>
+          </a>
+          <a href="#markets" class="nav-link" data-target="page-markets">
+            <span class="nav-icon">📈</span>
+            <span>Market Intelligence</span>
+          </a>
+          <a href="#ai-analyst" class="nav-link" data-target="page-ai-analyst">
+            <span class="nav-icon">🤖</span>
+            <span>AI Intelligence Analyst</span>
+          </a>
+          <a href="#data-explorer" class="nav-link" data-target="page-data-explorer">
+            <span class="nav-icon">🗄️</span>
+            <span>Data Explorer</span>
+          </a>
+          <a href="#risk-config" class="nav-link" data-target="page-risk-config">
+            <span class="nav-icon">⚙️</span>
+            <span>Risk Weight Console</span>
+          </a>
+        </nav>
+
+        <!-- Live Intelligence Section -->
+        <section class="sidebar-events-section">
+          <div class="events-header">
+            <div class="events-title-wrap">
+              <span class="pulse-indicator"></span>
+              <h3>Live Intelligence</h3>
+            </div>
+            <span id="sidebar-events-count" class="events-count-badge">24 ACTIVE</span>
+          </div>
+          <div id="sidebar-events-list" class="events-scroll-list">
+            <!-- Populated dynamically with clean, compact intelligence cards -->
+          </div>
+          <div class="events-footer-actions">
+            <button id="toggle-view-all-events" class="view-all-intel-btn">
+              <span id="toggle-view-all-text">View All Cables</span>
+              <span id="toggle-view-all-icon">↓</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Bottom AI Quick Chat Bar -->
+        <div class="sidebar-ai-quickchat">
+          <div class="quickchat-trigger">
+            <span class="ai-pulse"></span>
+            <input type="text" id="quickchat-input" placeholder="Ask AI Analyst..." style="background:transparent; border:none; color:#fff; font-size:12px; outline:none; width:100%;">
+            <button id="quickchat-send-btn" style="background:none; border:none; cursor:pointer; color:#3DD6FF;">➔</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN WORKSPACE -->
+      <main class="workspace-container">
+
+        <!-- ==================================================================
+             PAGE 1: DASHBOARD (Flagship Experience)
+             ================================================================== -->
+        <div id="page-dashboard" class="page-view active">
+          
+          <!-- Top 4 KPI Cards -->
+          <div class="kpi-row">
+            
+            <!-- 1. Global Tension Index KPI -->
+            <div class="glass-card gti-kpi-card">
+              <div class="kpi-card-inner">
+                <div class="kpi-top">
+                  <span class="kpi-title">Global Tension Index</span>
+                  <span id="kpi-gti-badge" class="kpi-badge high">+1.8 pts</span>
+                </div>
+                <div class="kpi-value-row">
+                  <span id="kpi-gti-val" class="kpi-huge-number" style="color:#F5A623;">72.0</span>
+                  <span id="kpi-gti-risk-level" class="kpi-subtext" style="color:#F5A623; font-weight:700;">HIGH TENSION</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                  <span style="font-size:11px; color:#94A3B8; font-family:'JetBrains Mono';">0-100 Saturation Model</span>
+                  <span style="font-size:11px; color:#3DD6FF; font-family:'JetBrains Mono';">30D Peak: 85.0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. S&P 500 KPI -->
+            <div class="glass-card">
+              <div class="kpi-card-inner">
+                <div class="kpi-top">
+                  <span class="kpi-title">S&amp;P 500</span>
+                  <span id="kpi-sp-badge" class="kpi-badge negative">-0.32%</span>
+                </div>
+                <div class="kpi-value-row">
+                  <span id="kpi-sp-val" class="kpi-huge-number">5,780.40</span>
+                  <span class="kpi-subtext">USD</span>
+                </div>
+                <canvas id="kpi-sp-sparkline" class="kpi-sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <!-- 3. NIFTY 50 KPI -->
+            <div class="glass-card">
+              <div class="kpi-card-inner">
+                <div class="kpi-top">
+                  <span class="kpi-title">NIFTY 50</span>
+                  <span id="kpi-nifty-badge" class="kpi-badge positive">+0.45%</span>
+                </div>
+                <div class="kpi-value-row">
+                  <span id="kpi-nifty-val" class="kpi-huge-number">25,145.20</span>
+                  <span class="kpi-subtext">INR</span>
+                </div>
+                <canvas id="kpi-nifty-sparkline" class="kpi-sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <!-- 4. Commodities KPI (Gold & Crude Oil) -->
+            <div class="glass-card">
+              <div class="kpi-card-inner">
+                <div class="kpi-top">
+                  <span class="kpi-title">Strategic Commodities</span>
+                  <span class="kpi-badge high">RISK ON</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                  <div>
+                    <div style="font-size:11px; color:#94A3B8;">Gold (XAU/USD)</div>
+                    <div style="font-size:18px; font-weight:700; font-family:'JetBrains Mono'; color:#F5F7FA;" id="kpi-gold-val">$2,684.50</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:11px; color:#94A3B8;">WTI Crude</div>
+                    <div style="font-size:18px; font-weight:700; font-family:'JetBrains Mono'; color:#F5F7FA;" id="kpi-crude-val">$76.85</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; font-family:'JetBrains Mono';">
+                  <span id="kpi-gold-chg" style="color:#2ECC71;">+1.25%</span>
+                  <span id="kpi-crude-chg" style="color:#FF5A5F;">+2.80%</span>
+                </div>
+                <canvas id="kpi-commodities-sparkline" class="kpi-sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- GTI Trend Panel Section (Bloomberg-grade chart & Analytics) -->
+          <div class="gti-trend-section">
+            <div class="glass-card trend-main-panel">
+              <div class="panel-header-bar">
+                <h3>Global Tension Index (GTI) Multi-Domain Trend</h3>
+                <span class="chokepoint-tag">72H EXPONENTIAL HALF-LIFE</span>
+              </div>
+
+              <!-- Statistics Ribbon -->
+              <div class="stats-ribbon">
+                <div class="ribbon-item">
+                  <span class="ribbon-label">Current GTI</span>
+                  <span id="ribbon-curr-gti" class="ribbon-value" style="color:#F5A623;">72.0</span>
+                </div>
+                <div class="ribbon-item">
+                  <span class="ribbon-label">Events (24H)</span>
+                  <span id="ribbon-24h-events" class="ribbon-value" style="color:#3DD6FF;">24</span>
+                </div>
+                <div class="ribbon-item">
+                  <span class="ribbon-label">Keyword Intensity</span>
+                  <span id="ribbon-keyword-intensity" class="ribbon-value" style="color:#FF5A5F;">ELEVATED</span>
+                </div>
+                <div class="ribbon-item">
+                  <span class="ribbon-label">30-Day Peak GTI</span>
+                  <span id="ribbon-peak-gti" class="ribbon-value" style="color:#F5F7FA;">85.0</span>
+                </div>
+              </div>
+
+              <!-- Plotly Chart Container -->
+              <div id="gti-trend-plotly-chart" class="plotly-chart-box"></div>
+            </div>
+
+            <!-- Right Analytics Panel -->
+            <div class="glass-card trend-side-panel">
+              <div class="panel-header-bar">
+                <h3>GTI Decomposition</h3>
+              </div>
+
+              <!-- Circular Score Gauge -->
+              <div class="circular-gauge-container">
+                <svg class="gauge-svg" viewBox="0 0 160 160">
+                  <circle class="gauge-bg-circle" cx="80" cy="80" r="65"></circle>
+                  <circle id="side-gauge-circle" class="gauge-bar-circle" cx="80" cy="80" r="65"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <span id="side-gauge-number" class="gauge-number">72.0</span>
+                  <span class="gauge-label">SCORE</span>
+                </div>
+              </div>
+
+              <!-- Regional Mini Bars -->
+              <div style="font-size:11px; text-transform:uppercase; font-family:'JetBrains Mono'; color:#64748B; margin-top:6px;">Regional Stress Vectors</div>
+              <div id="side-regional-mini-list" class="regional-mini-list">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tension vs Markets Dual-Axis Chart -->
+          <div class="glass-card" style="margin-bottom:24px;">
+            <div class="panel-header-bar">
+              <div>
+                <h3>Global Tension vs Markets (Cross-Asset Transmission)</h3>
+                <p class="page-subtitle">Dual-axis correlation with automated plain-language translation</p>
+              </div>
+
+              <div class="chart-controls-row">
+                <select id="dual-axis-asset-select" class="custom-select">
+                  <option value="CL=F">WTI Crude Oil (CL=F)</option>
+                  <option value="GC=F">Gold (GC=F)</option>
+                  <option value="^GSPC">S&amp;P 500 (^GSPC)</option>
+                  <option value="^NSEI">NIFTY 50 (^NSEI)</option>
+                  <option value="INR=X">USD / INR (INR=X)</option>
+                </select>
+
+                <div class="pill-group">
+                  <button class="pill-btn window-pill-btn" data-days="7">7D</button>
+                  <button class="pill-btn window-pill-btn active" data-days="30">30D</button>
+                  <button class="pill-btn window-pill-btn" data-days="90">90D</button>
+                  <button class="pill-btn window-pill-btn" data-days="365">1Y</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dual Axis Chart -->
+            <div id="dual-axis-plotly-chart" style="width:100%; height:320px;"></div>
+
+            <!-- "Why This Matters" Plain Language Translation Banner (Brief §8) -->
+            <div class="why-this-matters-banner">
+              <span class="banner-icon">💡</span>
+              <div class="banner-text">
+                <h4>Impact Translation Analysis</h4>
+                <p id="why-this-matters-text">
+                  Strong positive correlation: Geopolitical escalation in the Middle East is directly driving crude oil prices higher due to tanker safety premiums and maritime choke point threats.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Heatmap & Regional Risk Analysis -->
+          <div class="map-risk-section">
+            
+            <!-- Conflict Map Card -->
+            <div class="glass-card">
+              <div class="panel-header-bar">
+                <h3>Global Conflict Hotspots</h3>
+                <span class="chokepoint-tag">CARTODB DARK MATTER</span>
+              </div>
+              <div class="dashboard-map-container">
+                <div id="dashboard-map-container" class="map-layer"></div>
+              </div>
+            </div>
+
+            <!-- Regional Risk Analysis Animated Bars -->
+            <div class="glass-card regional-full-card">
+              <div class="panel-header-bar">
+                <h3>Regional Risk Attribution</h3>
+                <span style="font-size:11px; font-family:'JetBrains Mono'; color:#3DD6FF;">WEIGHTED INFLUENCE</span>
+              </div>
+              <p class="page-subtitle" style="margin-bottom:14px;">
+                Strategic weights, nuclear capabilities, and energy corridor importance aggregated into total GTI score.
+              </p>
+              <div id="regional-risk-bars-container" class="regional-bars-list">
+                <!-- Populated dynamically with animated progress bars -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ==================================================================
+             PAGE 2: GLOBAL CONFLICT MAP (Dedicated Full Page)
+             ================================================================== -->
+        <div id="page-conflict-map" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h2>Global Conflict &amp; Chokepoint Theater</h2>
+              <p class="page-subtitle">Real-time geospatial visualization of kinetic clashes, cyber incidents, and maritime transit chokepoints</p>
+            </div>
+          </div>
+
+          <div class="conflict-page-layout">
+            <div class="conflict-map-wrapper">
+              <!-- Floating Map Controls -->
+              <div class="map-floating-toolbar">
+                <button class="pill-btn map-filter-btn active" data-region="all">All Theaters</button>
+                <button class="pill-btn map-filter-btn" data-region="Middle East">Middle East</button>
+                <button class="pill-btn map-filter-btn" data-region="Eastern Europe">Eastern Europe</button>
+                <button class="pill-btn map-filter-btn" data-region="East Asia">East Asia</button>
+                <button class="pill-btn map-filter-btn" data-region="South Asia">South Asia</button>
+                <button class="pill-btn map-filter-btn" data-region="Africa">Africa</button>
+              </div>
+              <div id="full-conflict-map-container" style="width:100%; height:100%;"></div>
+            </div>
+
+            <!-- Side Drawer: Hotspots & Chokepoints -->
+            <div class="map-side-drawer">
+              <div class="panel-header-bar">
+                <h3>Monitored Chokepoints</h3>
+              </div>
+              <div class="drawer-hotspots-list">
+                <div class="glass-card" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <b style="color:#F5F7FA;">Strait of Hormuz</b>
+                    <span class="sev-tag critical">DEFCON AMBER</span>
+                  </div>
+                  <div style="font-size:12px; color:#94A3B8;">21 Million bpd crude flow. Heightened Iranian fast-boat patrols.</div>
+                </div>
+                <div class="glass-card" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <b style="color:#F5F7FA;">Bab el-Mandeb</b>
+                    <span class="sev-tag critical">ACTIVE COMBAT</span>
+                  </div>
+                  <div style="font-size:12px; color:#94A3B8;">Houthi anti-ship missile corridor. Red Sea container traffic diverted.</div>
+                </div>
+                <div class="glass-card" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <b style="color:#F5F7FA;">Taiwan Strait</b>
+                    <span class="sev-tag high">LIVE EXERCISE</span>
+                  </div>
+                  <div style="font-size:12px; color:#94A3B8;">Median line naval encirclement drill. Semiconductor supply vulnerability.</div>
+                </div>
+                <div class="glass-card" style="padding:12px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <b style="color:#F5F7FA;">Black Sea Grain Corridor</b>
+                    <span class="sev-tag high">MINED WATERS</span>
+                  </div>
+                  <div style="font-size:12px; color:#94A3B8;">Drone strikes on Danube and Odesa port infrastructure.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PAGE 3: MARKET INTELLIGENCE
+             ================================================================== -->
+        <div id="page-markets" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h2>Financial Market Intelligence</h2>
+              <p class="page-subtitle">Cross-asset correlation matrix, market stress volatility indicators, and commodity sensitivities</p>
+            </div>
+          </div>
+
+          <div class="market-intel-grid">
+            <!-- Normalized Performance Comparison -->
+            <div class="glass-card">
+              <div class="panel-header-bar">
+                <h3>Normalized Multi-Asset Performance (Base 100)</h3>
+                <span class="chokepoint-tag">30-DAY WINDOW</span>
+              </div>
+              <div id="normalized-perf-chart" style="width:100%; height:320px;"></div>
+            </div>
+
+            <!-- Market Stress Volatility Circular Gauge -->
+            <div class="glass-card stress-gauge-card">
+              <div class="panel-header-bar" style="width:100%; text-align:center;">
+                <h3>Market Stress Volatility Index</h3>
+              </div>
+              <div class="stress-circle-meter">
+                <svg class="gauge-svg" viewBox="0 0 160 160">
+                  <circle class="gauge-bg-circle" cx="80" cy="80" r="65"></circle>
+                  <circle id="stress-gauge-circle" class="gauge-bar-circle" cx="80" cy="80" r="65" style="stroke:#3DD6FF;"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <span id="stress-gauge-val" class="gauge-number" style="color:#3DD6FF;">58.4</span>
+                  <span id="stress-gauge-label" class="kpi-badge high" style="margin-top:6px;">ELEVATED STRESS</span>
+                </div>
+              </div>
+              <p style="font-size:12px; color:#94A3B8; text-align:center; max-width:280px; margin-top:12px;">
+                Synthesized from realized volatility, safe-haven gold bid, crude risk premia, and equity implied volatility.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Correlation Matrix & Commodity Table -->
+          <div class="market-matrix-section">
+            <!-- Pearson Correlation Matrix Heatmap -->
+            <div class="glass-card">
+              <div class="panel-header-bar">
+                <h3>Pearson Correlation Heatmap Matrix</h3>
+                <span style="font-size:11px; font-family:'JetBrains Mono'; color:#2ECC71;">r ∈ [-1.0, +1.0]</span>
+              </div>
+              <div id="correlation-matrix-chart" style="width:100%; height:320px;"></div>
+            </div>
+
+            <!-- Geopolitical Commodity Tracker Table -->
+            <div class="glass-card">
+              <div class="panel-header-bar">
+                <h3>Strategic Asset Sensitivity Matrix</h3>
+              </div>
+              <table class="commodity-ticker-table">
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Asset</th>
+                    <th>Price</th>
+                    <th>24h Change</th>
+                    <th>Primary Geopolitical Vector</th>
+                  </tr>
+                </thead>
+                <tbody id="commodity-table-body">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PAGE 4: AI INTELLIGENCE ANALYST
+             ================================================================== -->
+        <div id="page-ai-analyst" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h2>AI Intelligence Analyst Workspace</h2>
+              <p class="page-subtitle">Grounded geopolitical-economic intelligence briefing formulated from live GTI data, market movements, and breaking cables</p>
+            </div>
+          </div>
+
+          <div class="ai-workspace-layout">
+            <!-- Left Suggested Prompts Panel -->
+            <div class="glass-card suggested-prompts-panel">
+              <div class="panel-header-bar">
+                <h3>Suggested Inquiries</h3>
+              </div>
+              <button class="prompt-chip-btn" data-prompt="Why is crude oil rising today?">
+                🔥 <b>Why is crude oil rising today?</b><br>
+                <small style="color:#64748B;">Inspect Middle East supply chokepoints &amp; risk premia</small>
+              </button>
+              <button class="prompt-chip-btn" data-prompt="Explain today's GTI score.">
+                🎯 <b>Explain today's GTI score.</b><br>
+                <small style="color:#64748B;">Decompose raw score, exponential saturation &amp; decay</small>
+              </button>
+              <button class="prompt-chip-btn" data-prompt="Compare GTI with NIFTY.">
+                🇮🇳 <b>Compare GTI with NIFTY.</b><br>
+                <small style="color:#64748B;">Indian macro vulnerability &amp; USD/INR transmission</small>
+              </button>
+              <button class="prompt-chip-btn" data-prompt="Summarize Middle East developments.">
+                🌍 <b>Summarize Middle East developments.</b><br>
+                <small style="color:#64748B;">Hormuz &amp; Bab el-Mandeb security overview</small>
+              </button>
+              <button class="prompt-chip-btn" data-prompt="Which region contributes most to market volatility?">
+                ⚡ <b>Which region contributes most to market volatility?</b><br>
+                <small style="color:#64748B;">Regional volatility transmission hierarchy</small>
+              </button>
+            </div>
+
+            <!-- Center Conversational Stream -->
+            <div class="glass-card ai-chat-center-panel" style="padding:0;">
+              <div id="ai-messages-scroll" class="ai-messages-scroll">
+                <!-- Chat briefings loaded dynamically -->
+              </div>
+              <div class="ai-input-bar">
+                <input type="text" id="ai-query-input" class="ai-query-input" placeholder="Type a geopolitical-economic query (e.g. 'What is the impact of Strait of Hormuz closure on food prices?')...">
+                <button id="ai-send-btn" class="ai-send-btn">Generate Briefing ➔</button>
+              </div>
+            </div>
+
+            <!-- Right Live Context Inspector -->
+            <div class="live-context-panel">
+              <div class="panel-header-bar">
+                <h3>Active Intelligence Context</h3>
+              </div>
+              <div id="live-context-panel-content">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PAGE 5: DATA EXPLORER
+             ================================================================== -->
+        <div id="page-data-explorer" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h2>Data Explorer &amp; Export Center</h2>
+              <p class="page-subtitle">Search, filter, inspect, and export normalized datasets across conflicts, market time series, and GTI history</p>
+            </div>
+            <div>
+              <button id="explorer-export-btn" class="btn-primary">⬇️ Download CSV Dataset</button>
+            </div>
+          </div>
+
+          <!-- Dataset Tabs -->
+          <div class="data-tabs-bar">
+            <button class="data-tab-btn active" data-dataset="events">Geopolitical News &amp; Events</button>
+            <button class="data-tab-btn" data-dataset="gti_history">GTI Historical Time Series</button>
+            <button class="data-tab-btn" data-dataset="market_data">Equities &amp; Indices</button>
+            <button class="data-tab-btn" data-dataset="commodities">Commodities</button>
+            <button class="data-tab-btn" data-dataset="exchange_rates">Foreign Exchange (FX)</button>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="data-filters-toolbar">
+            <div class="search-input-box">
+              <span>🔍</span>
+              <input type="text" id="explorer-search-input" placeholder="Search keywords, locations, sources...">
+            </div>
+
+            <div style="display:flex; gap:10px;">
+              <select id="explorer-region-filter" class="custom-select">
+                <option value="all">All Regions</option>
+                <option value="Middle East">Middle East</option>
+                <option value="Eastern Europe">Eastern Europe</option>
+                <option value="East Asia">East Asia</option>
+                <option value="South Asia">South Asia</option>
+                <option value="Africa">Africa</option>
+                <option value="Americas">Americas</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Data Table -->
+          <div class="data-table-container">
+            <table class="explorer-table">
+              <thead id="explorer-table-head">
+                <!-- Headers populated dynamically -->
+              </thead>
+              <tbody id="explorer-table-body">
+                <!-- Body populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PAGE 6: RISK WEIGHT CONFIGURATION CONSOLE (GTI Methodology)
+             ================================================================== -->
+        <div id="page-risk-config" class="page-view">
+          <div class="page-title-row">
+            <div>
+              <h2>Global Tension Index (GTI) Risk Weight Console</h2>
+              <p class="page-subtitle">Tune mathematical multipliers, keyword severities, decay constants, and observe real-time index re-calibration</p>
+            </div>
+            <div>
+              <button id="btn-apply-weights" class="btn-primary">Apply Risk Weights &amp; Recalculate</button>
+            </div>
+          </div>
+
+          <div class="config-console-layout">
+            <!-- Left Controls Column -->
+            <div>
+              <!-- Regional Multipliers -->
+              <div class="glass-card slider-group-card">
+                <div class="panel-header-bar">
+                  <h3>Regional Strategic Multipliers (0.5x – 2.5x)</h3>
+                </div>
+                <div id="regional-sliders-container">
+                  <!-- Populated dynamically with interactive sliders -->
+                </div>
+              </div>
+
+              <!-- Mathematical Calibration & Half-Life -->
+              <div class="glass-card slider-group-card">
+                <div class="panel-header-bar">
+                  <h3>Formula Parameters &amp; Exponential Decay</h3>
+                </div>
+                
+                <div class="slider-control-row">
+                  <div class="slider-info">
+                    <span class="slider-name">Calibration Constant (k)</span>
+                    <span class="slider-desc">GTI = 100 × (1 − e^(−raw / k))</span>
+                  </div>
+                  <div class="slider-track-wrap">
+                    <input type="range" id="slider-k-value" class="custom-range-slider" min="1000" max="6000" step="50" value="2850">
+                    <span id="val-k-value" class="slider-val-readout">2850</span>
+                  </div>
+                </div>
+
+                <div class="slider-control-row">
+                  <div class="slider-info">
+                    <span class="slider-name">Decay Half-Life</span>
+                    <span class="slider-desc">0.5 ^ (hours_since / half_life)</span>
+                  </div>
+                  <div class="slider-track-wrap">
+                    <input type="range" id="slider-half-life" class="custom-range-slider" min="24" max="168" step="6" value="72">
+                    <span id="val-half-life" class="slider-val-readout">72 hrs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Live Computed GTI Card -->
+            <div>
+              <div class="glass-card" style="margin-bottom:18px;">
+                <div class="panel-header-bar">
+                  <h3>Live GTI Simulation Preview</h3>
+                </div>
+                <div style="text-align:center; padding:20px 0;">
+                  <div style="font-size:12px; color:#94A3B8; text-transform:uppercase; font-family:'JetBrains Mono';">Simulated Score</div>
+                  <div id="live-gti-preview-val" style="font-family:'Outfit'; font-size:54px; font-weight:800; color:#3DD6FF;">72.0</div>
+                  <div style="font-size:12px; color:#2ECC71;">Real-time preview responding to sliders</div>
+                </div>
+              </div>
+
+              <div class="glass-card">
+                <div class="panel-header-bar">
+                  <h3>Active Formula Decomposition</h3>
+                </div>
+                <div id="computed-gti-card-content">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- ======================================================================
+         MODALS & OVERLAYS
+         ====================================================================== -->
+    <!-- Event Detail Modal -->
+    <div id="event-detail-modal" class="modal-overlay">
+      <div class="modal-card">
+        <div id="event-modal-content">
+          <!-- Populated dynamically on click -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Popover -->
+    <div id="notifications-popover" class="notifications-popover">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #23364D; padding-bottom:8px;">
+        <b style="color:#F5F7FA; font-size:13px;">Critical Escalation Alerts</b>
+        <span class="badge-counter" style="position:static;">3 New</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:rgba(255,90,95,0.1); border-left:3px solid #FF5A5F; padding:8px 10px; border-radius:4px;">
+          <div style="font-size:12px; font-weight:600; color:#FF5A5F;">Strait of Hormuz Naval Standoff</div>
+          <div style="font-size:11px; color:#CBD5E1;">IRGC vessels shadow commercial crude tanker. WTI crude +7.4%.</div>
+        </div>
+        <div style="background:rgba(245,166,35,0.1); border-left:3px solid #F5A623; padding:8px 10px; border-radius:4px;">
+          <div style="font-size:12px; font-weight:600; color:#F5A623;">Red Sea Missile Interceptions</div>
+          <div style="font-size:11px; color:#CBD5E1;">Bab el-Mandeb transit risks elevated; container detours continue.</div>
+        </div>
+        <div style="background:rgba(61,214,255,0.1); border-left:3px solid #3DD6FF; padding:8px 10px; border-radius:4px;">
+          <div style="font-size:12px; font-weight:600; color:#3DD6FF;">Black Sea Grain Infrastructure Strikes</div>
+          <div style="font-size:11px; color:#CBD5E1;">Hypersonic strikes on Danube export terminal.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Application Logic Modules -->
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/analyst.js"></script>
+  <script src="js/explorer.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

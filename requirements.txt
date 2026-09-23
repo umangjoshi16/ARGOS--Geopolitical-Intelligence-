@@ -1,0 +1,19 @@
+# ==============================================================================
+# ARGOS — Python Dependencies & Environment Requirements
+# ==============================================================================
+# Core Architecture:
+# ARGOS is engineered with a Zero-Dependency architecture using the Python 3.8+
+# standard library (http.server, sqlite3, urllib.request, xml.etree, math, json, threading).
+#
+# No external pip packages are strictly required to run the platform locally!
+# Simply execute: python3 server.py
+# ==============================================================================
+
+# Python Version:
+# Requires: Python >= 3.8
+
+# Optional Production & Extension Packages:
+# For production WSGI/ASGI deployments, extended HTTP clients, or external LLM integrations:
+# urllib3>=2.0.0
+# python-dotenv>=1.0.0
+# requests>=2.31.0
