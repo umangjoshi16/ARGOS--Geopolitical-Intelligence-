@@ -1,6 +1,6 @@
 # 🌍 ARGOS — Geopolitical & Economic Intelligence Platform
 
-Live Demo : **[Open ARGOS Live] https://argos-geopolitical-intelligence.onrender.com/
+Live Demo: [Open ARGOS Live] -->  https://argos-geopolitical-intelligence.onrender.com/
 
 
 <p align="center">
