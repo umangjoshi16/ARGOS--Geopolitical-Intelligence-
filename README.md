@@ -19,7 +19,7 @@ Live Demo: [Open ARGOS Live] -->  https://argos-geopolitical-intelligence.onrend
 
 ---
 
-## 📌 Executive Overview
+## Executive Overview
 
 **ARGOS** tracks real-world kinetic events — wars, naval blockades, sanctions, energy shocks, and cyber incidents — and translates them into actionable macroeconomic briefings and plain-language consumer impacts (fuel prices, cost of living, currency volatility, and supply chains).
 
@@ -27,7 +27,7 @@ Rather than an arbitrary metric, ARGOS features the proprietary **Global Tension
 
 ---
 
-## 📸 Terminal Interface & Screenshots
+## Terminal Interface & Screenshots
 
 ### 1. Master Command Center Layout
 ```
@@ -62,7 +62,7 @@ Rather than an arbitrary metric, ARGOS features the proprietary **Global Tension
 
 ---
 
-## 🏛️ System Architecture
+##  System Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -91,7 +91,7 @@ Rather than an arbitrary metric, ARGOS features the proprietary **Global Tension
 
 ---
 
-## 📐 GTI Mathematical Formulation
+##  GTI Mathematical Formulation
 
 ARGOS implements a formal mathematical specification rather than arbitrary metrics:
 
@@ -145,7 +145,7 @@ Argos/
 
 ---
 
-## ⚡ Quickstart & Installation
+##  Quickstart & Installation
 
 ### 1. Prerequisites
 - **Python 3.8+** (installed by default on macOS and Linux)
@@ -188,7 +188,7 @@ Open your web browser and navigate to:
 
 ---
 
-## 🛠️ GitHub Deployment & Git Commands
+##  GitHub Deployment & Git Commands
 
 To push this project to your GitHub account:
 
